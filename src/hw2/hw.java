@@ -21,6 +21,7 @@ public class hw {
 			this.name=name  ;
 			this.balance=balance ;
 		}
+		
 		 void addbooks (books x1) {
 			 books.add(x1.name);
 			 amount+=x1.price;
