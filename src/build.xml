@@ -1,0 +1,67 @@
+<project default="main">
+
+	<property name="src.java.dir" location="./src/hw2"/>
+	<property name="src.test.dir" location="./src/hw2"/>
+	<property name="result.dir" location="./target"/>
+	<property name="result.javaclasses.dir" location="${result.dir}/classs"/>
+	<property name="result.testclasses.dir" location="${result.dir}/testclasss"/>
+	<property name="result.jar.file" location="./MyProduct.jar"/>
+
+	<target name="compile">
+		<mkdir dir="${result.javaclasses.dir}"/>
+		<javac srcdir="${src.java.dir}" destdir="${result.javaclasses.dir}" debug="true"  includeantruntime="false">
+		</javac>
+	</target>
+
+	<!-- Comment Make jar or executable product -->
+	<target name="jar" depends="compile">
+		<jar destfile="${result.jar.file}">
+			<fileset dir="${result.javaclasses.dir}">
+			</fileset>
+		</jar>
+	</target>
+
+
+
+	<path id="NecessaryLibraries">
+		<pathelement location="./UsedLibraries/junit.jar"/>
+		<!--matcher-->
+		<pathelement location="./UsedLibraries/org.hamcrest.core_1.3.0.v20180420-1519.jar"/>
+		<!--pathelement location="./UsedLibraries/org.junit.jupiter.api_5.1.0.v20180327-1502.jar"/-->
+
+		<!--<pathelement location="./UsedLibraries/jacocoant.jar"/>-->
+	</path>
+
+
+
+	<target name="compile-testcases" depends="compile">
+		<mkdir dir="${result.testclasses.dir}"/>
+		<javac srcdir="${src.test.dir}"  destdir="${result.testclasses.dir}" debug="true" includeantruntime="false">
+			<classpath>
+				<path refid="NecessaryLibraries"/>
+				<pathelement location="${result.javaclasses.dir}"/>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" depends="compile-testcases">
+		<!--fork : each test will run in its own JVM (to seperate test cases)-->
+		<junit printsummary="true" haltonfailure="true" fork="true">
+			<classpath>
+				<path refid="NecessaryLibraries">
+				</path>
+				<pathelement location="${result.javaclasses.dir}"/>
+				<pathelement location="${result.testclasses.dir}"/>
+			</classpath>
+			<formatter type="brief" usefile="false"/>
+			<batchtest >
+				<fileset dir="${result.testclasses.dir}" >
+					<include name="**/*Test.class"/>
+				</fileset>
+			</batchtest>
+
+		</junit>
+	</target>
+	<target name="main" depends="test, jar">
+	</target>
+</project>
